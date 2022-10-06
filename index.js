@@ -21,13 +21,14 @@ try {
 
     // we recognize * as a wildcard for the file name
     var fileStream;
+    var fileName;
 
     if (file.includes('/') && file.includes('*')) {
         var path = file.substring(0, file.lastIndexOf('/') + 1);
-        var filename = file.substring(file.lastIndexOf('/') + 1, file.length);
+        fileName = file.substring(file.lastIndexOf('/') + 1, file.length);
         var files = fs.readdirSync(path);
         files.forEach(function (file) {
-            fileStream = fs.createReadStream(path + file);
+            fileStream = fs.createReadStream(path + "/" + file);
             fileStream.on('error', function (err) {
                 console.log('File Error', err);
                 core.setFailed(err);
