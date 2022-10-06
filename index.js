@@ -18,14 +18,28 @@ try {
     });
 
     var uploadParams = { Bucket: bucket, Key: '', Body: '' };
-
-    var fileStream = fs.createReadStream(file);
-    fileStream.on('error', function (err) {
-        console.log('File Error', err);
-        core.setFailed(err);
-    });
+    
+    // we recognize * as a wildcard for the file name
+    var filestream;
+    if (file === '*') { //
+        const files = fs.readdirSync('./');
+        files.forEach((file) => {
+            filestream = fs.createReadStream(file);
+            filestream.on('error', function (err) {
+                console.log('File Error', err);
+                core.setFailed(err);
+            });
+        });
+    } else {
+        filestream = fs.createReadStream(file);
+        filestream.on('error', function (err) {
+            console.log('File Error', err);
+            core.setFailed(err);
+        });
+    }
     uploadParams.Body = fileStream;
-    if (destination == "") {
+
+    if (destination == "") { 
         var path = require('path');
         uploadParams.Key = path.basename(file);
     } else { uploadParams.Key = destination; }
